@@ -48,6 +48,7 @@ jobs:
         run: npm run test -- --watch=false
 
   build-job:
+    needs: [lint-job, test-job]
     runs-on: ubuntu-latest
 
     steps:
