@@ -157,7 +157,7 @@ jobs:
       - name: Prepare Vercel output
         run: |
           mkdir -p .vercel/output/static
-          cp -r dist/project-name/browser/. .vercel/output/static/
+          cp -r dist/git-actions-diploy/browser/. .vercel/output/static/
 
           cat > .vercel/output/config.json <<'EOF'
           {
