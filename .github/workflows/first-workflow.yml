@@ -51,39 +51,6 @@ jobs:
     needs: [lint-job, test-job]
     runs-on: ubuntu-latest
 
-    # env:
-    #   VERCEL_ORG_ID: '${{secrets.VERCEL_ORG_ID}}'
-    #   VERCEL_PROJECT_ID: '${{secrets.VERCEL_PROJECT_ID}}'
-
-    # steps:
-    #   - name: checkout
-    #     uses: actions/checkout@v6
-
-    #   - name: 'setup node js in VM'
-    #     uses: actions/setup-node@v6
-    #     with:
-    #       node-version: 22.19.0
-    #       cache: npm
-
-    #   - name: install dependancy
-    #     run: npm ci
-
-    #   - name: make Angular build
-    #     run: npm run build
-
-    #   - name: create artifact
-    #     uses: actions/upload-artifact@v6
-    #     with:
-    #       name: angular-build
-    #       path: dist/
-    #       retetion-days: 7
-
-    #   - name: 'Install vercel cli'
-    #     run: npm install --global vercel
-
-    #   - name: 'deployment on vercel'
-    #     run: vercel deploy dist --prod --yes --token="${{secrets.VERCEL_TOKEN1}}"
-
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
