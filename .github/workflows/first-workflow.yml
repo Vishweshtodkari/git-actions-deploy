@@ -47,134 +47,71 @@ jobs:
       - name: run test cases
         run: npm run test -- --watch=false
 
-  # build-job:
-  #   needs: [lint-job, test-job]
-  #   runs-on: ubuntu-latest
-
-  #   # env:
-  #   #   VERCEL_ORG_ID: '${{secrets.VERCEL_ORG_ID}}'
-  #   #   VERCEL_PROJECT_ID: '${{secrets.VERCEL_PROJECT_ID}}'
-
-  #   # steps:
-  #   #   - name: checkout
-  #   #     uses: actions/checkout@v6
-
-  #   #   - name: 'setup node js in VM'
-  #   #     uses: actions/setup-node@v6
-  #   #     with:
-  #   #       node-version: 22.19.0
-  #   #       cache: npm
-
-  #   #   - name: install dependancy
-  #   #     run: npm ci
-
-  #   #   - name: make Angular build
-  #   #     run: npm run build
-
-  #   #   - name: create artifact
-  #   #     uses: actions/upload-artifact@v6
-  #   #     with:
-  #   #       name: angular-build
-  #   #       path: dist/
-  #   #       retetion-days: 7
-
-  #   #   - name: 'Install vercel cli'
-  #   #     run: npm install --global vercel
-
-  #   #   - name: 'deployment on vercel'
-  #   #     run: vercel deploy dist --prod --yes --token="${{secrets.VERCEL_TOKEN1}}"
-
-  #   env:
-  #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v6
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v6
-  #       with:
-  #         node-version: 22.19.0
-  #         cache: npm
-
-  #     - name: Install dependencies
-  #       run: npm ci
-
-  #     - name: Install Vercel CLI
-  #       run: npm install --global vercel
-
-  #     - name: Link Vercel project
-  #       run: vercel link --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
-
-  #     - name: Pull Vercel project settings
-  #       run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN1 }}"
-
-  #     - name: Build for Vercel
-  #       run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN1 }}"
-
-  #     - name: Upload build artifact
-  #       uses: actions/upload-artifact@v6
-  #       with:
-  #         name: angular-build
-  #         path: .vercel/output/
-  #         retention-days: 7
-
-  #     - name: Deploy to Vercel
-  #       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #       run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
-
   build-job:
     needs: [lint-job, test-job]
     runs-on: ubuntu-latest
 
+    # env:
+    #   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+    #   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v6
+
+    #   - name: Setup Node.js
+    #     uses: actions/setup-node@v6
+    #     with:
+    #       node-version: 22.19.0
+    #       cache: npm
+
+    #   - name: Install dependencies
+    #     run: npm ci
+
+    #   - name: Install Vercel CLI
+    #     run: npm install --global vercel
+
+    #   - name: Link Vercel project
+    #     run: vercel link --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
+
+    #   - name: Pull Vercel project settings
+    #     run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN1 }}"
+
+    #   - name: Build for Vercel
+    #     run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN1 }}"
+
+    #   - name: Upload build artifact
+    #     uses: actions/upload-artifact@v6
+    #     with:
+    #       name: angular-build
+    #       path: .vercel/output/
+    #       retention-days: 7
+
+    #   - name: Deploy to Vercel
+    #     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    #     run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
+
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN1 }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.19.0
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test -- --watch=false
 
-      - name: Make Angular build
-        run: npm run build
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel
-
-      - name: Link Vercel project
-        run: vercel link --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
-
-      - name: Prepare Vercel output
-        run: |
-          mkdir -p .vercel/output/static
-          cp -r dist/git-actions-diploy/browser/. .vercel/output/static/
-
-          cat > .vercel/output/config.json <<'EOF'
-          {
-            "version": 3
-          }
-          EOF
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: angular-build
-          path: .vercel/output/
-          retention-days: 7
-
-      - name: Deploy to Vercel
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
+      - run: npm install --global vercel
+      - run: vercel pull --yes --environment=production
+      - run: vercel build --prod
+      - run: vercel deploy --prebuilt --prod
 
 # name: deploy-angular
 
