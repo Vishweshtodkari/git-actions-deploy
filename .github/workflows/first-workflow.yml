@@ -121,4 +121,5 @@ jobs:
           retention-days: 7
 
       - name: Deploy to Vercel
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
