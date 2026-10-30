@@ -113,5 +113,12 @@ jobs:
       - name: Build for Vercel
         run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN1 }}"
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: angular-build
+          path: .vercel/output/
+          retention-days: 7
+
       - name: Deploy to Vercel
         run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN1 }}"
